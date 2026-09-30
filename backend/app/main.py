@@ -41,6 +41,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:5173",
         "https://tumour-detection-six.vercel.app",
+        "https://tumour-detection-fyv03pmj-sshiv-1s-projects.vercel.app",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
