@@ -13,6 +13,7 @@ from .schemas import HealthResponse, PredictionResponse
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/jpg"}
 
+
 state: dict = {}
 
 
@@ -39,6 +40,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:5173",
+        "https://tumour-detection-six.vercel.app/",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
