@@ -1,0 +1,589 @@
+@import "tailwindcss";
+
+/* ── Design tokens ───────────────────────────────────────── */
+:root {
+  --bg: #1c1c1e;
+  --header: #1f1f21;
+  --sidebar: #2b2b2d;
+  --panel: #4a4a4c;
+  --viewport: #000;
+  --border: #333;
+  --text: #fff;
+  --text-2: #d0d0d0;
+  --muted: #9a9a9a;
+  --accent: #e8540c;
+  --accent-hover: #fa6c27;
+  --error: #e5484d;
+}
+
+@theme {
+  --font-sans: "Noto Sans", "Segoe UI", system-ui, sans-serif;
+}
+
+/* ── Base ────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: "Noto Sans", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Scrollbars ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Focus ring ──────────────────────────────────────────── */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+.animate-fade-in  { animation: fade-in 150ms ease-out both; }
+.animate-pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.topbar {
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  background: var(--header);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.topbar-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-right: 16px;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin-right: 16px;
+}
+
+.study-tab {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 12px;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.study-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.study-filename {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.study-meta {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.topbar-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.topbar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.topbar-dot.online  { background: #10b981; } /* Just a generic green for online status dot, or we can use accent if requested, but prompt says "no green/amber/purple/blue status colours, no rainbow segmentation colours" and "Red only for errors". Let's stick to accent/white for online? Wait, prompt: "No green/amber/purple/blue status colours". "accent teal only... wait, accent teal was previous prompt. Current prompt: accent #e8540c, error #e5484d." So dot should probably be muted or white or accent. I'll use accent for online. */
+.topbar-dot.online  { background: var(--text); }
+.topbar-dot.offline { background: var(--error); animation: pulse-dot 1.6s ease-in-out infinite; }
+
+/* ── Main area ───────────────────────────────────────────── */
+.main-area {
+  flex: 1;
+  display: flex;
+  min-height: calc(100vh - 48px);
+  background: var(--bg);
+}
+
+/* ── Sidebar (left column) ──────────────────────────────── */
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.info-block {
+  background: var(--panel);
+  border-radius: 2px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.info-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+.info-row:last-child {
+  margin-bottom: 0;
+}
+.info-label {
+  color: var(--muted);
+}
+.info-value {
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ── Sidebar Bottom (Pinned Actions) ────────────────────── */
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.pill-btn {
+  flex: 1;
+  height: 36px;
+  border-radius: 18px;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms;
+  white-space: nowrap;
+}
+.pill-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.pill-btn-grey {
+  background: var(--panel);
+  color: var(--text);
+}
+.pill-btn-grey:hover {
+  background: #525254; /* 8% lighter approx */
+}
+.pill-btn-accent {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.pill-btn-accent:hover {
+  background: var(--accent-hover);
+}
+
+/* ── Viewport Area (right column) ───────────────────────── */
+.viewport-container {
+  flex: 1;
+  background: var(--header); /* 8px gap of #1f1f21 around it */
+  padding: 8px;
+  display: flex;
+}
+
+.viewport {
+  flex: 1;
+  background: var(--viewport);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.viewport img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Dropzone styling */
+.dropzone {
+  flex: 1;
+  background: var(--viewport);
+  border: 1px dashed #444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 150ms;
+}
+.dropzone:hover,
+.dropzone.dragging {
+  border-color: var(--muted);
+}
+.dropzone-text {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Viewport overlays */
+.viewport-overlay-tr {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.viewport-zoom-slider {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 100px;
+  background: #333;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.zoom-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  background: var(--viewport);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.zoom-chevron:hover {
+  color: var(--text);
+}
+
+/* ── States inside Sidebar ──────────────────────────────── */
+.state-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Analyzing */
+.analyzing-stage {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.analyzing-bar-track {
+  width: 100%;
+  height: 2px;
+  background: var(--panel);
+  overflow: hidden;
+  position: relative;
+}
+.analyzing-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30%;
+  background: var(--text);
+  animation: slide-bar 1.5s infinite ease-in-out alternate;
+}
+@keyframes slide-bar {
+  0% { left: 0%; }
+  100% { left: 70%; }
+}
+
+/* Success */
+.result-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.result-class {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.result-confidence-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+.result-confidence {
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+.result-confidence-unit {
+  font-size: 20px;
+  color: var(--muted);
+}
+.result-confidence-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.prob-row {
+  margin-bottom: 12px;
+}
+.prob-row:last-child {
+  margin-bottom: 0;
+}
+.prob-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.prob-name {
+  color: var(--text-2);
+}
+.prob-pct {
+  color: var(--text);
+}
+.prob-track {
+  height: 4px;
+  background: var(--panel);
+}
+.prob-fill {
+  height: 100%;
+}
+
+/* Error */
+.error-block {
+  background: var(--panel);
+  border-left: 3px solid var(--error);
+  padding: 12px;
+}
+.error-message {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.error-actions {
+  display: flex;
+  gap: 16px;
+}
+.error-btn {
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 0;
+}
+.error-btn:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+/* ── Below the fold ──────────────────────────────────────── */
+.pipeline-section {
+  padding: 48px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.pipeline-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.pipeline-step {
+  font-size: 13px;
+  color: var(--text-2);
+  padding: 6px 0;
+}
+.pipeline-connector {
+  width: 32px;
+  height: 1px;
+  background: var(--border);
+  margin: 0 8px;
+}
+
+.model-info-section {
+  padding: 48px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.model-info-grid {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.model-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.model-info-row:last-child {
+  border-bottom: none;
+}
+.model-info-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+.model-info-value {
+  font-size: 13px;
+  color: var(--text-2);
+  text-align: right;
+}
+
+.disclaimer {
+  padding: 32px 24px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: center;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.disclaimer p {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main-area {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    order: 2;
+  }
+  .viewport-container {
+    padding: 0;
+    order: 1;
+  }
+  .viewport, .dropzone {
+    aspect-ratio: 1 / 1;
+    min-height: auto;
+  }
+  .sidebar-bottom {
+    position: sticky;
+    bottom: 0;
+    background: var(--sidebar);
+    padding-bottom: 16px;
+    z-index: 10;
+  }
+  .pipeline-row {
+    flex-direction: column;
+  }
+  .pipeline-connector {
+    width: 1px;
+    height: 16px;
+    margin: 8px 0;
+  }
+  .model-info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .model-info-value {
+    text-align: left;
+  }
+  .result-confidence {
+    font-size: 40px;
+  }
+}
